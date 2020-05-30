@@ -1,6 +1,9 @@
 import React from "react";
 import { render } from "react-dom";
 import "./Board.css";
+import { shuffleArray, swapArrayEntries } from "./Utils.js";
+
+const BLANK_TILE_VALUE = false;
 
 class Board extends React.Component {
   // A list which describes allowable tile moves on the puzzle
@@ -25,41 +28,48 @@ class Board extends React.Component {
 
   state = {
     // Place the 16 tiles into the tile list
-    tiles: [false, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    tiles: [
+      BLANK_TILE_VALUE,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+    ],
   };
 
   constructor(props) {
     super(props);
 
-    this.shuffleArray(this.state.tiles);
+    this.state.tiles = shuffleArray(this.state.tiles);
     this.startTiles = this.state.tiles.slice();
   }
 
-  shuffleArray = (array) => {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-  };
-
-  slideTile = (position, e) => {
-    let possibleMoves = this.allowableMoves[position];
+  slideTile = (clickedTile, e) => {
+    let possibleMoves = this.allowableMoves[clickedTile];
 
     // Loop through the possible moves
     for (let i = 0; i < possibleMoves.length; ++i) {
-      // if one of the possible moves is into the blank position
-      let blankPosition = possibleMoves[i];
+      let blankTile = possibleMoves[i];
 
-      if (this.state.tiles[blankPosition] === false) {
+      // Test for the blank tile
+      if (this.state.tiles[blankTile] === BLANK_TILE_VALUE) {
+        // Blank tile was found so swap it with clicked tile
         this.setState((prevState) => {
           // copy the previous states tile array
-          let newTiles = prevState.tiles.slice();
-
-          // swap the blank position with the current position
-          newTiles[blankPosition] = prevState.tiles[position];
-          newTiles[position] = prevState.tiles[blankPosition];
-
-          return { tiles: newTiles };
+          return {
+            tiles: swapArrayEntries(prevState.tiles, blankTile, clickedTile),
+          };
         });
       }
     }
