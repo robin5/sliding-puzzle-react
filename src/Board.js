@@ -46,6 +46,7 @@ class Board extends React.Component {
       14,
       15,
     ],
+    moveCount: 0,
   };
 
   constructor(props) {
@@ -67,8 +68,10 @@ class Board extends React.Component {
         // Blank tile was found so swap it with clicked tile
         this.setState((prevState) => {
           // copy the previous states tile array
+          console.log(typeof prevState.moveCount);
           return {
             tiles: swapArrayEntries(prevState.tiles, blankTile, clickedTile),
+            moveCount: prevState.moveCount + 1,
           };
         });
       }
@@ -82,23 +85,38 @@ class Board extends React.Component {
 
   render() {
     return (
-      <div className="Board-outer-wrapper">
+      <div>
         <div className="Board-button-container">
           <button onClick={this.resetTiles}>Reset</button>
           <button>New Game</button>
           <button>Replay</button>
         </div>
-        <div className="Board-inner-wrapper flex-container">
-          {this.state.tiles.map((tile, index) => (
-            <div
-              key={index}
-              id={`tile-${index}`}
-              className={tile ? "tile" : "tile blank-tile"}
-              onClick={(e) => this.slideTile(index, e)}
-            >
-              {tile ? tile : ""}
-            </div>
-          ))}
+        <div className="Board-outer-wrapper">
+          <div className="Board-inner-wrapper flex-container">
+            {this.state.tiles.map((tile, index) => (
+              <div
+                key={index}
+                id={`tile-${index}`}
+                className={tile ? "tile" : "tile blank-tile"}
+                onClick={(e) => this.slideTile(index, e)}
+              >
+                {tile ? tile : ""}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div>
+          <p
+            className={
+              this.state.moveCount === 0
+                ? "Board-counter-sm"
+                : "Board-counter-lg"
+            }
+          >
+            {this.state.moveCount === 0
+              ? "How many moves will it take you to win?"
+              : `Count: ${this.state.moveCount}`}
+          </p>
         </div>
       </div>
     );

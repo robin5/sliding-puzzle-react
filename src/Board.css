@@ -10,6 +10,14 @@
   justify-content: space-around;
   padding: 10px;
 }
+.Board-counter-sm {
+  color: white;
+  font-size: 1em;
+}
+.Board-counter-lg {
+  color: white;
+  font-size: 1.6em;
+}
 .flex-container {
   display: flex;
   flex-direction: row;
