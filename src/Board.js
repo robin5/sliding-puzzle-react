@@ -53,6 +53,7 @@ class Board extends React.Component {
     super(props);
 
     this.state.tiles = shuffleArray(this.state.tiles);
+    this.state.moveCount = 0;
     this.startTiles = this.state.tiles.slice();
   }
 
@@ -68,7 +69,6 @@ class Board extends React.Component {
         // Blank tile was found so swap it with clicked tile
         this.setState((prevState) => {
           // copy the previous states tile array
-          console.log(typeof prevState.moveCount);
           return {
             tiles: swapArrayEntries(prevState.tiles, blankTile, clickedTile),
             moveCount: prevState.moveCount + 1,
@@ -79,8 +79,17 @@ class Board extends React.Component {
   };
 
   resetTiles = () => {
-    console.log("reset the tiles");
-    this.setState(() => ({ tiles: this.startTiles.slice() }));
+    this.setState(() => ({ tiles: this.startTiles.slice(), moveCount: 0 }));
+  };
+
+  newGame = () => {
+    const newTiles = shuffleArray(this.state.tiles);
+    this.startTiles = newTiles;
+
+    this.setState(() => ({
+      tiles: newTiles,
+      moveCount: 0,
+    }));
   };
 
   render() {
@@ -88,7 +97,7 @@ class Board extends React.Component {
       <div>
         <div className="Board-button-container">
           <button onClick={this.resetTiles}>Reset</button>
-          <button>New Game</button>
+          <button onClick={this.newGame}>New Game</button>
           <button>Replay</button>
         </div>
         <div className="Board-outer-wrapper">
