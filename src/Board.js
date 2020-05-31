@@ -2,6 +2,12 @@ import React from "react";
 import { render } from "react-dom";
 import "./Board.css";
 import { shuffleArray, swapArrayEntries } from "./Utils.js";
+import {
+  setStartTiles,
+  getStartTiles,
+  setTileRecord,
+  getTileRecord,
+} from "./PlayFile.js";
 
 const BLANK_TILE_VALUE = false;
 
@@ -46,7 +52,9 @@ class Board extends React.Component {
       14,
       15,
     ],
+    startTiles: [],
     moveCount: 0,
+    tileRecord: [],
     gameWon: false,
   };
 
@@ -54,8 +62,8 @@ class Board extends React.Component {
     super(props);
 
     this.state.tiles = shuffleArray(this.state.tiles);
-    this.state.moveCount = 0;
-    this.startTiles = this.state.tiles.slice();
+    this.state.startTiles = this.state.tiles.slice();
+    setStartTiles(this.startTiles);
   }
 
   slideTile = (clickedTile, e) => {
@@ -76,10 +84,16 @@ class Board extends React.Component {
       if (this.state.tiles[blankTile] === BLANK_TILE_VALUE) {
         // Blank tile was found so swap it with clicked tile
         this.setState((prevState) => {
-          // copy the previous states tile array
+          // Add move to previous record
+          let newTileRecord = prevState.tileRecord.slice();
+          newTileRecord.push(clickedTile);
+          setTileRecord(newTileRecord);
+
+          // set the next state
           let nextState = {
             tiles: swapArrayEntries(prevState.tiles, blankTile, clickedTile),
             moveCount: prevState.moveCount + 1,
+            tileRecord: newTileRecord,
             gameWon: this.isWinningBoard(),
           };
           return nextState;
@@ -100,22 +114,44 @@ class Board extends React.Component {
   };
 
   resetTiles = () => {
-    this.setState(() => ({
-      tiles: this.startTiles.slice(),
-      moveCount: 0,
-      gameWon: false,
-    }));
+    this.setState((prevState) => {
+      // Set the tiles back to the start tiles
+      const newTiles = prevState.startTiles.slice();
+
+      // Reset the tile record
+      const newTileRecord = [];
+      setTileRecord(newTileRecord);
+
+      // Setup the next state
+      const nextState = {
+        tiles: newTiles,
+        tileRecord: newTileRecord,
+        moveCount: 0,
+        gameWon: false,
+      };
+
+      return nextState;
+    });
   };
 
   newGame = () => {
     const newTiles = shuffleArray(this.state.tiles);
-    this.startTiles = newTiles;
+    setStartTiles(this.state.startTiles);
+
+    let newTileRecord = [];
+    setTileRecord(newTileRecord);
 
     this.setState(() => ({
       tiles: newTiles,
+      startTiles: newTiles.slice(),
       moveCount: 0,
+      tileRecord: newTileRecord,
       gameWon: false,
     }));
+  };
+
+  replayGame = () => {
+    console.log(`replayGame`);
   };
 
   render() {
@@ -124,7 +160,7 @@ class Board extends React.Component {
         <div className="Board-button-container">
           <button onClick={this.resetTiles}>Reset</button>
           <button onClick={this.newGame}>New Game</button>
-          <button>Replay</button>
+          <button onClick={this.replayGame}>Replay</button>
         </div>
         <div className="Board-outer-wrapper">
           <div className="Board-inner-wrapper flex-container">
