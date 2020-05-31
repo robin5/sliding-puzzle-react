@@ -18,7 +18,6 @@ const getStartTiles = () => {
 
 /** Writes the starting tiles to the cookie */
 const setTileRecord = (arr) => {
-  console.log(`setTileRecord ${arr}`);
   saveArray(TILE_RECORD, arr);
 };
 

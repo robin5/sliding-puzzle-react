@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "react-dom";
 import "./Board.css";
-import { shuffleArray, swapArrayEntries } from "./Utils.js";
+import { shuffleArray, swapArrayEntries, arrayGenerator } from "./Utils.js";
 import {
   setStartTiles,
   getStartTiles,
@@ -63,7 +63,7 @@ class Board extends React.Component {
 
     this.state.tiles = shuffleArray(this.state.tiles);
     this.state.startTiles = this.state.tiles.slice();
-    setStartTiles(this.startTiles);
+    setStartTiles(this.state.startTiles);
   }
 
   slideTile = (clickedTile, e) => {
@@ -109,8 +109,8 @@ class Board extends React.Component {
       if (this.state.tiles[i] !== i + 1) {
         return false;
       }
-      return true;
     }
+    return true;
   };
 
   resetTiles = () => {
@@ -136,22 +136,42 @@ class Board extends React.Component {
 
   newGame = () => {
     const newTiles = shuffleArray(this.state.tiles);
-    setStartTiles(this.state.startTiles);
-
-    let newTileRecord = [];
-    setTileRecord(newTileRecord);
+    setStartTiles(newTiles);
+    setTileRecord([]);
 
     this.setState(() => ({
       tiles: newTiles,
       startTiles: newTiles.slice(),
       moveCount: 0,
-      tileRecord: newTileRecord,
+      tileRecord: [],
       gameWon: false,
     }));
   };
 
+  tilePlayer = () => {
+    let tile = this.tileGen.next();
+    if (tile.done) {
+      clearInterval(this.interval);
+    } else {
+      this.slideTile(tile.value, null);
+    }
+  };
+
   replayGame = () => {
-    console.log(`replayGame`);
+    let startTiles = getStartTiles();
+    this.tileGen = arrayGenerator(getTileRecord());
+    // this.tileGen = tileGenerator(tileRecord);
+    this.setState((prevState) => {
+      const nextState = {
+        tiles: startTiles,
+        moveCount: 0,
+        gameWon: false,
+      };
+
+      return nextState;
+    });
+
+    this.interval = setInterval(this.tilePlayer, 500);
   };
 
   render() {

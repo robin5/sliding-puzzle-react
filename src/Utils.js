@@ -19,4 +19,10 @@ const swapArrayEntries = (array, index1, index2) => {
   return newArray;
 };
 
-export { shuffleArray, swapArrayEntries };
+function* arrayGenerator(arr) {
+  for (let i = 0; i < arr.length; ++i) {
+    yield arr[i];
+  }
+}
+
+export { shuffleArray, swapArrayEntries, arrayGenerator };
