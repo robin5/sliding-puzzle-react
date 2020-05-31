@@ -47,6 +47,7 @@ class Board extends React.Component {
       15,
     ],
     moveCount: 0,
+    gameWon: false,
   };
 
   constructor(props) {
@@ -58,9 +59,16 @@ class Board extends React.Component {
   }
 
   slideTile = (clickedTile, e) => {
+    // If the game has been won, don't allow any more moves
+    if (this.state.gameWon) {
+      return;
+    }
+
+    // Get possible moves for the clicked tile
     let possibleMoves = this.allowableMoves[clickedTile];
 
-    // Loop through the possible moves
+    // Loop through the possible moves looking to see
+    // if one of the moves is into the blank position
     for (let i = 0; i < possibleMoves.length; ++i) {
       let blankTile = possibleMoves[i];
 
@@ -69,17 +77,34 @@ class Board extends React.Component {
         // Blank tile was found so swap it with clicked tile
         this.setState((prevState) => {
           // copy the previous states tile array
-          return {
+          let nextState = {
             tiles: swapArrayEntries(prevState.tiles, blankTile, clickedTile),
             moveCount: prevState.moveCount + 1,
+            gameWon: this.isWinningBoard(),
           };
+          return nextState;
         });
       }
     }
   };
 
+  /** returns whether the tiles are in a winning order */
+  isWinningBoard = () => {
+    const winningTileLength = this.state.tiles.length - 1;
+    for (let i = 0; i < winningTileLength; ++i) {
+      if (this.state.tiles[i] !== i + 1) {
+        return false;
+      }
+      return true;
+    }
+  };
+
   resetTiles = () => {
-    this.setState(() => ({ tiles: this.startTiles.slice(), moveCount: 0 }));
+    this.setState(() => ({
+      tiles: this.startTiles.slice(),
+      moveCount: 0,
+      gameWon: false,
+    }));
   };
 
   newGame = () => {
@@ -89,6 +114,7 @@ class Board extends React.Component {
     this.setState(() => ({
       tiles: newTiles,
       moveCount: 0,
+      gameWon: false,
     }));
   };
 
@@ -115,17 +141,30 @@ class Board extends React.Component {
           </div>
         </div>
         <div>
-          <p
-            className={
-              this.state.moveCount === 0
-                ? "Board-counter-sm"
-                : "Board-counter-lg"
-            }
-          >
-            {this.state.moveCount === 0
-              ? "How many moves will it take you to win?"
-              : `Count: ${this.state.moveCount}`}
-          </p>
+          {this.state.gameWon ? (
+            <div>
+              <img
+                src={require("./orangecheck.png")}
+                alt="check mark"
+                className="Board-checkmark"
+              />
+              <p className="Board-counter-lg">
+                You won in {this.state.moveCount} moves!
+              </p>
+            </div>
+          ) : (
+            <p
+              className={
+                this.state.moveCount === 0
+                  ? "Board-counter-sm"
+                  : "Board-counter-lg"
+              }
+            >
+              {this.state.moveCount === 0
+                ? "How many moves will it take you to win?"
+                : `Count: ${this.state.moveCount}`}
+            </p>
+          )}
         </div>
       </div>
     );
