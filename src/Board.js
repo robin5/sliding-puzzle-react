@@ -85,16 +85,18 @@ class Board extends React.Component {
         // Blank tile was found so swap it with clicked tile
         this.setState((prevState) => {
           // Add move to previous record
-          let newTileRecord = prevState.tileRecord.slice();
-          newTileRecord.push(clickedTile);
-          setTileRecord(newTileRecord);
+          let tileRecord = prevState.tileRecord.slice();
+          tileRecord.push(clickedTile);
+          setTileRecord(tileRecord);
+
+          let tiles = swapArrayEntries(prevState.tiles, blankTile, clickedTile);
 
           // set the next state
           let nextState = {
-            tiles: swapArrayEntries(prevState.tiles, blankTile, clickedTile),
+            tiles: tiles,
             moveCount: prevState.moveCount + 1,
-            tileRecord: newTileRecord,
-            gameWon: this.isWinningBoard(),
+            tileRecord: tileRecord,
+            gameWon: this.isWinningBoard(tiles),
           };
           return nextState;
         });
@@ -102,11 +104,11 @@ class Board extends React.Component {
     }
   };
 
-  /** returns whether the tiles are in a winning order */
-  isWinningBoard = () => {
-    const winningTileLength = this.state.tiles.length - 1;
+  /** Returns true if tiles are in winning order otherwise false */
+  isWinningBoard = (tiles) => {
+    const winningTileLength = tiles.length - 1;
     for (let i = 0; i < winningTileLength; ++i) {
-      if (this.state.tiles[i] !== i + 1) {
+      if (tiles[i] !== i + 1) {
         return false;
       }
     }
