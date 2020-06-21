@@ -25,4 +25,50 @@ function* arrayGenerator(arr) {
   }
 }
 
-export { shuffleArray, swapArrayEntries, arrayGenerator };
+const BLANK_TILE_VALUE = false;
+
+const DEFAULT_TILES = [
+  BLANK_TILE_VALUE,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+];
+
+const ONE_MOVE_TO_WIN = [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  BLANK_TILE_VALUE,
+  15,
+];
+
+export {
+  shuffleArray,
+  swapArrayEntries,
+  arrayGenerator,
+  DEFAULT_TILES,
+  ONE_MOVE_TO_WIN,
+};

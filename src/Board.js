@@ -1,13 +1,22 @@
 import React from "react";
 import { render } from "react-dom";
 import "./Board.css";
-import { shuffleArray, swapArrayEntries, arrayGenerator } from "./Utils.js";
+import {
+  shuffleArray,
+  swapArrayEntries,
+  arrayGenerator,
+  DEFAULT_TILES,
+  ONE_MOVE_TO_WIN,
+} from "./Utils.js";
 import {
   setStartTiles,
   getStartTiles,
   setTileRecord,
   getTileRecord,
 } from "./PlayFile.js";
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+import Button from "react-bootstrap/Button";
 
 const BLANK_TILE_VALUE = false;
 
@@ -34,24 +43,7 @@ class Board extends React.Component {
 
   state = {
     // Place the 16 tiles into the tile list
-    tiles: [
-      BLANK_TILE_VALUE,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-    ],
+    tiles: DEFAULT_TILES,
     startTiles: [],
     moveCount: 0,
     tileRecord: [],
@@ -62,6 +54,7 @@ class Board extends React.Component {
     super(props);
 
     this.state.tiles = shuffleArray(this.state.tiles);
+    // this.state.tiles = ONE_MOVE_TO_WIN;
     this.state.startTiles = this.state.tiles.slice();
     setStartTiles(this.state.startTiles);
   }
@@ -113,6 +106,11 @@ class Board extends React.Component {
       }
     }
     return true;
+  };
+
+  moveFocus = () => {
+    console.log("mouse up!");
+    document.getElementById("tile-0").focus();
   };
 
   resetTiles = () => {
@@ -178,35 +176,65 @@ class Board extends React.Component {
 
   render() {
     return (
-      <div>
-        <div className="Board-button-container">
-          <button onClick={this.resetTiles}>Reset</button>
-          <button onClick={this.newGame}>New Game</button>
-          <button onClick={this.replayGame}>Replay</button>
-        </div>
+      <div className="Board">
+        <Navbar expand="sm">
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="mr-auto">
+              <Button
+                className="btn-menu btn-lg"
+                onClick={this.resetTiles}
+                onMouseUp={this.moveFocus}
+                onMouseLeave={this.moveFocus}
+              >
+                Reset
+              </Button>
+              <Button
+                id="btn-new-game"
+                className="btn-menu btn-lg"
+                onClick={this.newGame}
+                onMouseUp={this.moveFocus}
+                onMouseLeave={this.moveFocus}
+              >
+                New Game
+              </Button>
+              <Button
+                className="btn-menu btn-lg"
+                onClick={this.replayGame}
+                onMouseUp={this.moveFocus}
+                onMouseLeave={this.moveFocus}
+              >
+                Replay
+              </Button>
+            </Nav>
+          </Navbar.Collapse>
+        </Navbar>
         <div className="Board-outer-wrapper">
           <div className="Board-inner-wrapper flex-container">
+            {this.state.gameWon ? (
+              <img
+                src={require("./orangecheck.png")}
+                alt="check mark"
+                className="Board-checkmark"
+              />
+            ) : null}
+
             {this.state.tiles.map((tile, index) => (
-              <div
+              <button
                 key={index}
                 id={`tile-${index}`}
                 className={tile ? "tile" : "tile blank-tile"}
                 onClick={(e) => this.slideTile(index, e)}
               >
                 {tile ? tile : ""}
-              </div>
+              </button>
             ))}
           </div>
         </div>
-        <div>
+        <div className="Board-counter-container">
           {this.state.gameWon ? (
             <div>
-              <img
-                src={require("./orangecheck.png")}
-                alt="check mark"
-                className="Board-checkmark"
-              />
-              <p className="Board-counter-lg">
+              <p className="Board-counter-text">
                 You won in {this.state.moveCount} moves!
               </p>
             </div>
@@ -214,8 +242,8 @@ class Board extends React.Component {
             <p
               className={
                 this.state.moveCount === 0
-                  ? "Board-counter-sm"
-                  : "Board-counter-lg"
+                  ? "Board-counter-text"
+                  : "Board-counter-count"
               }
             >
               {this.state.moveCount === 0

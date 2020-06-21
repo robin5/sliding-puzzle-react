@@ -1,29 +1,69 @@
+main {
+  margin: auto;
+}
+
+nav {
+  margin: 30px 0;
+}
+.bg-dark {
+  background-color: green;
+}
+
+.btn-menu {
+  margin: 2px 10px;
+  padding: 15px 25px;
+  font-size: 24px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: #fff;
+  box-shadow: 5px 10px 8px #2c0909;
+}
+
+.btn-menu:active {
+  box-shadow: 5px 10px 8px #2c0909;
+}
+
 .Board-outer-wrapper {
   border: 2px solid black;
+  border-radius: 8px;
+  box-shadow: 5px 10px 8px #2c0909;
 }
 .Board-inner-wrapper {
   border: 8px solid orange;
+  border-radius: 7px;
+  background-color: #160101;
 }
 .Board-button-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
+  padding: 20px;
+  background-color: #282c34;
+  margin: 20px auto;
+  border-radius: 4px;
+  box-shadow: 5px 10px 8px #2c0909;
+}
+.Board-button-container button {
+  font-size: 1.5em;
+  border-radius: 6px;
+}
+.Board-counter-container {
   padding: 10px;
+  background-color: #282c34;
+  margin: 40px auto;
+  border-radius: 4px;
+  box-shadow: 5px 10px 8px #2c0909;
 }
-.Board-counter-sm {
+.Board-counter-text {
   color: white;
-  font-size: 1em;
 }
-.Board-counter-lg {
+.Board-counter-count {
   color: white;
-  font-size: 1.6em;
 }
 .Board-checkmark {
   position: absolute;
   display: block;
-  padding-left: 50%;
-  top: 150px;
-  left: -100px;
 }
 .flex-container {
   display: flex;
@@ -34,14 +74,152 @@
 .tile {
   display: flex;
   box-sizing: border-box;
-  border: 1px solid black;
+  border-width: 4px;
+  border-style: outset;
   background-color: green;
   color: white;
-  height: 50px;
   width: 25%;
   justify-content: center;
   align-items: center;
+  border-radius: 10px;
+}
+.tile:focus {
+  outline: none;
 }
 .blank-tile {
-  background-color: #888;
+  background-color: #160101;
+  border: 1px solid #160101;
+}
+
+/* Extra small devices (portrait phones, less than 576px) */
+@media (max-width: 419.98px) {
+  main {
+    max-width: 245px;
+  }
+  .tile {
+    height: 50px;
+    font-size: 1.2em;
+    border-width: 1px;
+  }
+  .Board-counter-text {
+    font-size: 1.1rem;
+    margin: 10px auto;
+  }
+  .Board-counter-count {
+    font-size: 1.7rem;
+    margin: 0;
+  }
+  .btn-menu {
+    margin-top: 10px;
+  }
+  .Board-checkmark {
+    padding-left: 50%;
+    top: 190px;
+    left: -25%;
+    width: 100%;
+  }
+}
+
+/* Extra small devices (portrait phones, less than 576px) */
+@media (min-width: 420px) and (max-width: 575.98px) {
+  main {
+    max-width: 350px;
+  }
+  .tile {
+    height: 80px;
+    font-size: 1.8rem;
+    border-width: 2px;
+  }
+  .Board-counter-text {
+    font-size: 1.1rem;
+    margin: 10px auto;
+  }
+  .Board-counter-count {
+    font-size: 2.8rem;
+    margin: 0;
+  }
+  .btn-menu {
+    margin-top: 10px;
+    width: 200px;
+  }
+  .Board-checkmark {
+    padding-left: 50%;
+    top: 210px;
+    left: -100px;
+  }
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  main {
+    max-width: 420px;
+  }
+  .tile {
+    height: 100px;
+    font-size: 2em;
+  }
+  .Board-counter-text {
+    font-size: 1.3em;
+    margin: 10px auto;
+  }
+  .Board-counter-count {
+    font-size: 2.8rem;
+    margin: 0;
+  }
+  .Board-checkmark {
+    padding-left: 50%;
+    top: 210px;
+    left: -170px;
+    width: 100%;
+  }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  main {
+    max-width: 576px;
+  }
+  .tile {
+    height: 130px;
+    font-size: 3em;
+  }
+  .Board-counter-text {
+    font-size: 1.8em;
+    margin: 10px auto;
+  }
+  .Board-counter-count {
+    font-size: 2.6rem;
+    margin: 0;
+  }
+  .Board-checkmark {
+    padding-left: 50%;
+    top: 300px;
+    left: -15%;
+    width: 80%;
+  }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  main {
+    max-width: 768px;
+  }
+  .tile {
+    height: 150px;
+    font-size: 4em;
+  }
+  .Board-counter-text {
+    font-size: 2.1em;
+    margin: 10px auto;
+  }
+  .Board-counter-count {
+    font-size: 2.8rem;
+    margin: 0;
+  }
+  .Board-checkmark {
+    padding-left: 50%;
+    top: 210px;
+    left: -15%;
+    width: 80%;
+  }
 }
