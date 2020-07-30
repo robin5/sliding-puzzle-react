@@ -48,6 +48,7 @@ class Board extends React.Component {
     moveCount: 0,
     tileRecord: [],
     gameWon: false,
+    replaying: false,
   };
 
   constructor(props) {
@@ -59,9 +60,11 @@ class Board extends React.Component {
     setStartTiles(this.state.startTiles);
   }
 
+  /** Slides tile given by clickedTile into open position */
   slideTile = (clickedTile, e) => {
-    // If the game has been won, don't allow any more moves
-    if (this.state.gameWon) {
+    // If the game has been won, or we are replaying the game through the tile
+    // player and thus want to ignore a clicked tile, ignore the tile move
+    if (this.state.gameWon || (this.state.replaying && e !== null)) {
       return;
     }
 
@@ -77,11 +80,16 @@ class Board extends React.Component {
       if (this.state.tiles[blankTile] === BLANK_TILE_VALUE) {
         // Blank tile was found so swap it with clicked tile
         this.setState((prevState) => {
-          // Add move to previous record
+          // Get previous record of moves
           let tileRecord = prevState.tileRecord.slice();
-          tileRecord.push(clickedTile);
+
+          // if replaying the tile record then don't add the move to the record
+          if (!this.state.replaying) {
+            tileRecord.push(clickedTile);
+          }
           setTileRecord(tileRecord);
 
+          // Swap the tiles thereby mimicking the tile move
           let tiles = swapArrayEntries(prevState.tiles, blankTile, clickedTile);
 
           // set the next state
@@ -91,6 +99,7 @@ class Board extends React.Component {
             tileRecord: tileRecord,
             gameWon: this.isWinningBoard(tiles),
           };
+
           return nextState;
         });
       }
@@ -148,15 +157,17 @@ class Board extends React.Component {
     }));
   };
 
+  /**  Retrieves next tile to be replayed during game replay and cancels play when last tile is received */
   tilePlayer = () => {
     let tile = this.tileGen.next();
     if (tile.done) {
-      clearInterval(this.interval);
+      this.cancelReplay();
     } else {
       this.slideTile(tile.value, null);
     }
   };
 
+  /** Replays the game up to the current state */
   replayGame = () => {
     let startTiles = getStartTiles();
     this.tileGen = arrayGenerator(getTileRecord());
@@ -166,14 +177,27 @@ class Board extends React.Component {
         tiles: startTiles,
         moveCount: 0,
         gameWon: false,
+        replaying: true,
+        saveState: prevState
       };
-
       return nextState;
     });
 
-    this.interval = setInterval(this.tilePlayer, 500);
+    this.interval = setInterval(this.tilePlayer, 200);
   };
 
+  /** Cancels game replay */
+  cancelReplay = () => {
+    clearInterval(this.interval);
+    this.setState((prevState) => ({
+      replaying: false,
+      tiles: prevState.saveState.tiles,
+      moveCount: prevState.saveState.moveCount,
+      gameWon: prevState.saveState.gameWon,
+      }));
+  };
+
+  /** Renders liding puzzle board */
   render() {
     return (
       <div className="Board">
@@ -181,31 +205,44 @@ class Board extends React.Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              <Button
-                className="btn-menu btn-lg"
-                onClick={this.resetTiles}
-                onMouseUp={this.moveFocus}
-                onMouseLeave={this.moveFocus}
-              >
-                Reset
-              </Button>
-              <Button
-                id="btn-new-game"
-                className="btn-menu btn-lg"
-                onClick={this.newGame}
-                onMouseUp={this.moveFocus}
-                onMouseLeave={this.moveFocus}
-              >
-                New Game
-              </Button>
-              <Button
-                className="btn-menu btn-lg"
-                onClick={this.replayGame}
-                onMouseUp={this.moveFocus}
-                onMouseLeave={this.moveFocus}
-              >
-                Replay
-              </Button>
+              {this.state.replaying ? (
+                <Button
+                  className="btn-menu btn-lg"
+                  onClick={this.cancelReplay}
+                  onMouseUp={this.moveFocus}
+                  onMouseLeave={this.moveFocus}
+                >
+                  Cancel Replay
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    className="btn-menu btn-lg"
+                    onClick={this.resetTiles}
+                    onMouseUp={this.moveFocus}
+                    onMouseLeave={this.moveFocus}
+                  >
+                    Reset
+                  </Button>
+                  <Button
+                    id="btn-new-game"
+                    className="btn-menu btn-lg"
+                    onClick={this.newGame}
+                    onMouseUp={this.moveFocus}
+                    onMouseLeave={this.moveFocus}
+                  >
+                    New Game
+                  </Button>
+                  <Button
+                    className="btn-menu btn-lg"
+                    onClick={this.replayGame}
+                    onMouseUp={this.moveFocus}
+                    onMouseLeave={this.moveFocus}
+                  >
+                    Replay
+                  </Button>
+                </>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Navbar>
