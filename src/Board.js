@@ -1,12 +1,10 @@
 import React from "react";
-import { render } from "react-dom";
 import "./Board.css";
 import {
   shuffleArray,
   swapArrayEntries,
   arrayGenerator,
   DEFAULT_TILES,
-  ONE_MOVE_TO_WIN,
 } from "./Utils.js";
 import {
   setStartTiles,
